@@ -92,9 +92,7 @@ async function deleteBadMessage(update, env) {
     chat_id: message.chat.id,
     message_id: message.message_id,
   });
-}
-
-const untilDate = Math.floor(Date.now() / 1000) + 60; // 60 seconds
+  const untilDate = Math.floor(Date.now() / 1000) + 60; // 60 seconds
 
 await telegramApi(env, "restrictChatMember", {
   chat_id: message.chat.id,
@@ -116,6 +114,9 @@ await telegramApi(env, "restrictChatMember", {
   },
   until_date: untilDate
 });
+}
+
+
 
 async function setWebhook(request, env) {
   const url = new URL(request.url);
