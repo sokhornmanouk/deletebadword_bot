@@ -82,42 +82,79 @@ async function deleteBadMessage(update, env) {
   if (!message) return;
 
   const chatType = message.chat?.type;
-  if (chatType !== "group" && chatType !== "supergroup") return;
 
-  // Telegram sends normal messages in text and media descriptions in caption.
+  if (chatType !== "group" && chatType !== "supergroup") {
+    return;
+  }
+
   const content = message.text ?? message.caption ?? "";
-  if (!content || !containsBadWord(content)) return;
 
-  await telegramApi(env, "deleteMessage", {
-    chat_id: message.chat.id,
+  if (!content || !containsBadWord(content)) {
+    return;
+  }
+
+  const chatId = message.chat?.id;
+  const userId = message.from?.id;
+
+  if (!chatId || !userId) {
+    console.error("Missing chat_id or user_id");
+    return;
+  }
+
+  // លុបសារ
+  const deleteResult = await telegramApi(env, "deleteMessage", {
+    chat_id: chatId,
     message_id: message.message_id,
   });
-  const untilDate = Math.floor(Date.now() / 1000) + 60; // 60 seconds
 
-await telegramApi(env, "restrictChatMember", {
-  chat_id: message.chat.id,
-  user_id: message.from.id,
-  permissions: {
-    can_send_messages: false,
-    can_send_audios: false,
-    can_send_documents: false,
-    can_send_photos: false,
-    can_send_videos: false,
-    can_send_video_notes: false,
-    can_send_voice_notes: false,
-    can_send_polls: false,
-    can_send_other_messages: false,
-    can_add_web_page_previews: false,
-    can_change_info: false,
-    can_invite_users: false,
-    can_pin_messages: false
-  },
-  until_date: untilDate
-});
+  console.log("Delete result:", JSON.stringify(deleteResult));
+
+  // ពិនិត្យថាអ្នកផ្ញើជា Admin ឬអត់
+  const memberResult = await telegramApi(env, "getChatMember", {
+    chat_id: chatId,
+    user_id: userId,
+  });
+
+  console.log("Member result:", JSON.stringify(memberResult));
+
+  const memberStatus = memberResult?.result?.status;
+
+  if (
+    memberStatus === "creator" ||
+    memberStatus === "administrator"
+  ) {
+    console.log("Cannot restrict owner or administrator");
+    return;
+  }
+
+  // Mute 1 នាទី
+  const untilDate = Math.floor(Date.now() / 1000) + 60;
+
+  const restrictResult = await telegramApi(
+    env,
+    "restrictChatMember",
+    {
+      chat_id: chatId,
+      user_id: userId,
+      permissions: {
+        can_send_messages: false,
+        can_send_audios: false,
+        can_send_documents: false,
+        can_send_photos: false,
+        can_send_videos: false,
+        can_send_video_notes: false,
+        can_send_voice_notes: false,
+        can_send_polls: false,
+        can_send_other_messages: false,
+        can_add_web_page_previews: false,
+      },
+      use_independent_chat_permissions: true,
+      until_date: untilDate,
+    }
+  );
+
+  console.log("Restrict result:", JSON.stringify(restrictResult));
 }
-
-
-
 async function setWebhook(request, env) {
   const url = new URL(request.url);
   const suppliedKey = url.searchParams.get("key");
