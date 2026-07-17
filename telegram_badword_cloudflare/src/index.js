@@ -5,6 +5,16 @@ const BAD_WORDS = [
   "fxck",
   "sex",
   "sej",
+  "joy",
+  "kdor",
+  "sab",
+  "ចុយ",
+  "ក្ដ",
+  "ក្ត",
+  "ពង",
+  "pong",
+  "jea knoy",
+  "sor kdab",
 
   // Khmer examples:
   "ចុយ",
