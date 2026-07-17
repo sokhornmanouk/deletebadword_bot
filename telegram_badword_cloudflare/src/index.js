@@ -17,7 +17,7 @@ const BAD_WORDS = [
   "sor kdab",
   "លឹង្គ",
   "លិង្គ",
-  "beam"
+  "beam",
   "ខ្លុយជៀន",
   "kloy jean",
   "Beam",
