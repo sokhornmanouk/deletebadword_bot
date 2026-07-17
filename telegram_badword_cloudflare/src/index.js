@@ -15,6 +15,12 @@ const BAD_WORDS = [
   "pong",
   "jea knoy",
   "sor kdab",
+  "លឹង្គ",
+  "លិង្គ",
+  "beam"
+  "ខ្លុយជៀន",
+  "kloy jean",
+
 
   // Khmer examples:
   "ចុយ",
