@@ -21,6 +21,7 @@ const BAD_WORDS = [
   "ខ្លុយជៀន",
   "kloy jean",
   "Beam",
+  "💦",
 
 
   // Khmer examples:
